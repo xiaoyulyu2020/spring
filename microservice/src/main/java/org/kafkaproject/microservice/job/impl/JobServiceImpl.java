@@ -1,6 +1,7 @@
 package org.kafkaproject.microservice.job.impl;
 
 import org.kafkaproject.microservice.job.Job;
+import org.kafkaproject.microservice.job.JobRepo;
 import org.kafkaproject.microservice.job.JobService;
 import org.springframework.stereotype.Service;
 
@@ -10,34 +11,35 @@ import java.util.Objects;
 
 @Service
 public class JobServiceImpl implements JobService {
-    private final List<Job> jobs = new ArrayList<>();
-    private long id = 1L;
+//    private final List<Job> jobs = new ArrayList<>();
+
+    JobRepo jobRepo;
+
+    public JobServiceImpl(JobRepo jobRepo) {
+        this.jobRepo = jobRepo;
+    }
 
     @Override
     public List<Job> findAll() {
-
-        return jobs;
+        return jobRepo.findAll();
     }
 
     @Override
     public void createJob(Job job) {
-        job.setId(id++);
-        jobs.add(job);
+        jobRepo.save(job);
     }
 
     @Override
     public Job getJobById(Long id) {
-        return jobs.stream().filter(j -> Objects.equals(j.getId(), id))
-                .findFirst()
-                .orElse(null);
+        return jobRepo.findById(id).orElse(null);
     }
 
     @Override
     public boolean deleteJob(Long id) {
-        boolean result = jobs.stream().anyMatch(j -> Objects.equals(j.getId(), id));
+        boolean result = jobRepo.existsById(id);
 
         if(result) {
-            jobs.removeIf(j -> Objects.equals(j.getId(), id));
+            jobRepo.deleteById(id);
             return true;
         }
         return false;
@@ -45,7 +47,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public boolean updateJob(Long id, Job job) {
-        boolean result = jobs.stream().anyMatch(j -> Objects.equals(j.getId(), id));
+        boolean result = jobRepo.existsById(id);
 
         if (result) {
             Job oldjob = getJobById(id);
@@ -54,6 +56,7 @@ public class JobServiceImpl implements JobService {
             oldjob.setMaxSalary(job.getMaxSalary());
             oldjob.setMinSalary(job.getMinSalary());
             oldjob.setLocation(job.getLocation());
+            jobRepo.save(oldjob);
         }
         return result;
     }

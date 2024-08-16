@@ -1,9 +1,12 @@
 package org.kafkaproject.microservice.job;
 
+import jakarta.persistence.*;
 import org.springframework.http.HttpStatusCode;
-
+@Entity
+//@Table(name = "job_table")
 public class Job {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
@@ -18,6 +21,9 @@ public class Job {
         this.minSalary = minSalary;
         this.maxSalary = maxSalary;
         this.location = location;
+    }
+
+    public Job() {
     }
 
     public Long getId() {
