@@ -3,6 +3,7 @@ package org.kafkaproject.microservice.companies.Impl;
 import org.kafkaproject.microservice.companies.Company;
 import org.kafkaproject.microservice.companies.CompanyRepo;
 import org.kafkaproject.microservice.companies.CompanyService;
+import org.kafkaproject.microservice.job.Job;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-    CompanyRepo companyRepo;
+    private final CompanyRepo companyRepo;
     public CompanyServiceImpl(CompanyRepo companyRepo) {
         this.companyRepo = companyRepo;
     }
@@ -33,7 +34,9 @@ public class CompanyServiceImpl implements CompanyService {
             Company oldCompany = companyRepo.findById(id).get();
             oldCompany.setCompanyAddress(company.getCompanyAddress());
             oldCompany.setCompanyName(company.getCompanyName());
-            companyRepo.save(company);
+            oldCompany.setJobs(company.getJobs());
+            companyRepo.save(oldCompany);
+            return true;
         }
         return false;
     }
@@ -50,5 +53,23 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Company getCompany(Long id) {
         return companyRepo.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Job> getAllJobs(Long id) {
+        boolean result = companyRepo.existsById(id);
+        if (result) {
+            return companyRepo.findById(id).get().getJobs();
+        }
+        return null;
+    }
+
+    @Override
+    public void addJob(Long id, Job job) {
+        boolean companyExists = companyRepo.existsById(id);
+        boolean jobExists = companyRepo.findById(id).get().getJobs().contains(job);
+        if (!jobExists && companyExists) {
+            companyRepo.findById(id).get().addJob(job);
+        }
     }
 }

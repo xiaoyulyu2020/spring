@@ -1,9 +1,11 @@
 package org.kafkaproject.microservice.companies;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import org.kafkaproject.microservice.job.Job;
+import org.kafkaproject.microservice.reviews.Review;
+
+import java.util.List;
 
 @Entity
 public class Company {
@@ -13,6 +15,21 @@ public class Company {
     private String companyName;
     private String companyAddress;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "company")
+    private List<Job> jobs;
+
+    @OneToMany(mappedBy = "company")
+    private List<Review> reviews;
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     public Company(Long id, String companyName, String companyAddress) {
         this.id = id;
         this.companyName = companyName;
@@ -21,6 +38,18 @@ public class Company {
 
     public Company() {
 
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
+
+    public void addJob(Job job) {
+        this.jobs.add(job);
     }
 
     public Long getId() {

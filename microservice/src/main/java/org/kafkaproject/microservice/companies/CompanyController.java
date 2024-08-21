@@ -1,6 +1,7 @@
 package org.kafkaproject.microservice.companies;
 
 
+import org.kafkaproject.microservice.job.Job;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,5 +42,15 @@ public class CompanyController {
     @GetMapping("/{id}")
     public Company getCompany(@PathVariable Long id) {
         return companyService.getCompany(id);
+    }
+
+    @GetMapping("/{id}/jobs")
+    public List<Job> getAllJobs(@PathVariable Long id) {
+        return companyService.getAllJobs(id);
+    }
+
+    @PostMapping("/{id}/addJob")
+    public void addJob(@PathVariable Long id ,@RequestBody Job job) {
+        companyService.addJob(id, job);
     }
 }

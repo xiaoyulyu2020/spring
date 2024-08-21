@@ -1,6 +1,7 @@
 package org.kafkaproject.microservice.job;
 
 import jakarta.persistence.*;
+import org.kafkaproject.microservice.companies.Company;
 import org.springframework.http.HttpStatusCode;
 @Entity
 //@Table(name = "job_table")
@@ -14,6 +15,12 @@ public class Job {
     private Integer maxSalary;
     private String location;
 
+    @ManyToOne
+    private Company company;
+
+    public Job() {
+    }
+
     public Job(Long id, String title, String description, Integer minSalary, Integer maxSalary, String location) {
         this.id = id;
         this.title = title;
@@ -23,7 +30,12 @@ public class Job {
         this.location = location;
     }
 
-    public Job() {
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Company getCompany() {
+        return company;
     }
 
     public Long getId() {
