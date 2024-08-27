@@ -12,5 +12,4 @@ public interface CompanyService {
     Company getCompany(Long id);
     List<Job> getAllJobs(Long id);
     void addJob(Long id, Job job);
-
 }
